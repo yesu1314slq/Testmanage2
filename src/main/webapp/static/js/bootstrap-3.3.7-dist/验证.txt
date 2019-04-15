@@ -1,0 +1,61 @@
+引入js
+<script type="text/javascript" src="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrapvalidator/bootstrapValidator.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrapvalidator/zh_CN.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrapvalidator/bootstrapValidator.min.css">
+
+函数:
+	$(document).ready(function() {
+    $('#update_product_from').bootstrapValidator({
+        feedbackIcons: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+        },
+        fields: {
+        	userName: {
+                validators: {
+                    notEmpty: {
+                        message: '不能为空'
+                    },
+                    regexp: {
+                        regexp: /^[\u4E00-\u9FA5]+$/,
+                        message: '用户名只能包含大写、小写、数字和下划线'
+                    },
+                }
+            },
+            userPassWord:{
+            	validators:{
+            		notEmpty:{
+            			message:"不能为空"
+            		},regexp:{
+            			regexp:/^[0-9]+$/,
+            			message:"只能是数字"
+            		}
+            	}
+            },userPhone:{
+            	validators:{
+            		notEmpty:{
+            			message:"不能为空"
+            		},stringLength: {
+                        min: 11,
+                        max: 11,
+                        message: '请输入11位手机号码'
+                    },
+                    regexp: {
+                        regexp: /^1[3|5|8]{1}[0-9]{9}$/,
+                        message: '请输入正确的手机号码'
+                    }
+            	}
+            },
+            userEime:{
+            	validators:{
+            		notEmpty:{
+            			message:"不能为空"
+            		},emailAddress: {
+                        message: '邮箱地址格式有误'
+                    }
+            	}
+            }
+        } 
+    });
+});

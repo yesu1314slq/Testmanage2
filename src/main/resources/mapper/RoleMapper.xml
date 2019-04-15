@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ideal.uam.mapper.role.RoleMapper" >
+	<!--查询用户角色-->
+	<select id="getRoleList" parameterType="int" resultType="role">
+		select r.name from role r ,staff_2_role sr where r.role_id=sr.role_id and staff_id=#{id}
+	</select>
+	<!--角色管理条件查询及分页-->
+	<select id="getRoleListPage" parameterType="com.ideal.uam.util.Page" resultType="role">
+		select role_id,name,description,create_dt,start_dt,end_dt,version from role where 1=1 limit #{strat},#{pagecount}
+	</select>
+	<!--角色管理查询总条数-->
+	<select id="getCount" parameterType="com.ideal.uam.util.Page" resultType="int">
+		select count(1) from role where 1=1
+	</select>
+	<!--角色管理查询一个对象-->
+	<select id="getRoleById" parameterType="string" resultType="role">
+		SELECT role_id,name,description,create_dt,start_dt,end_dt,version FROM role WHERE role_id=#{role_id}
+	</select>
+     <!--角色管理修改一个对象-->
+	<update id="updateRole" parameterType="role">
+		update role set name =#{name},description =#{description},create_dt =#{create_dt},start_dt =#{start_dt},
+		end_dt =#{end_dt},version =#{version} where role_id=#{role_id};
+	</update>
+	<!--角色管理删除一个对象-->
+	<delete id="deleteRoleById" parameterType="Integer" >
+		DELETE  from role where role_id=#{role_id}
+	</delete>
+	<!--查询角色管理的role_id、name-->
+	<select id="getRoleAllList" resultType="role">
+		select role_id,name from role
+	</select>
+	<!--删除用户角色-->
+	<delete id="deleteStaffRoleById" parameterType="int">
+		DELETE FROM staff_2_role where staff_id=#{id}
+	</delete>
+	<!--新增用户角色-->
+	<insert id="insertStaffRoleById" parameterType="map">
+		insert into staff_2_role (role_id,staff_id) values (#{role_id},#{id})
+	</insert>
+	<!--根据用户指定id获取角色详情-->
+	<select id="roleDetailsByStaffId" parameterType="string" resultType="role">
+		select r.name,r.description,r.create_dt,r.start_dt,r.end_dt from staff_2_role sr ,role r where sr.role_id=r.role_id and staff_id=#{id}
+	</select>
+	<!--新增角色-->
+	<insert id="insertRole" parameterType="role">
+		insert into role(name,description,create_dt,start_dt,end_dt) values(#{name},#{description},#{create_dt},#{start_dt},#{end_dt})
+	</insert>
+</mapper>

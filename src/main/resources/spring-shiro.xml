@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+    http://www.springframework.org/schema/util 
+    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login.jsp" />
+		<property name="unauthorizedUrl" value="/unauthorized.jsp" />
+		<property name="filterChainDefinitions">
+			<value>
+				/login/userLogin.html = anon
+				/login/toUserAddPage.html = anon
+				/login/insertUser.html = anon
+				/static/**=anon
+				/** = authc
+                <!--其他资源需要认证 -->
+			</value>
+		</property>
+	</bean>
+	 <!-- 缓存管理 -->  
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"></bean>
+    
+    <!-- Shiro安全管理器 -->  
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">  
+        <property name="realm" ref="monitorRealm"></property>  
+        <property name="cacheManager" ref="cacheManager"></property>  
+    </bean>  
+ 
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!--自定义Realm 继承自AuthorizingRealm -->
+	<bean id="monitorRealm" class="com.ideal.uam.shiro.MonitorRealm">
+		<property name="authenticationCachingEnabled" value="true"/>
+		<property name="authorizationCachingEnabled" value="false"/>
+		<property name="credentialsMatcher" ref="credentialsMatcher"></property>
+	</bean>
+	 <!-- 数据库保存的密码是使用MD5算法加密的，所以这里需要配置一个密码匹配对象 -->  
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+    	<property name="hashAlgorithmName" value="md5"></property>
+    	<property name="hashIterations" value="1"></property>
+    	<property name="storedCredentialsHexEncoded" value="true"></property>
+    </bean> 
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor" />
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+	
+</beans>

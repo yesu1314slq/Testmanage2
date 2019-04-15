@@ -1,0 +1,125 @@
+﻿引入js
+<script type="text/javascript" src="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrap-treeview-master/src/js/bootstrap-treeview.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrap-treeview-master/src/css/bootstrap-treeview.css">
+<script src="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrap-addtabs/bootstrap.addtabs.min.js"></script>
+<link href="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrap-addtabs/bootstrap.addtabs.css" rel="stylesheet" />
+
+前台页面
+
+<div class='row'>
+				<div class="col-md-2">
+				<!--treeview 插件树-->
+					<div id="tree"></div>                  				
+				</div>
+				<div class="col-md-10">
+				<!--右侧tab页--->
+					 <div id="tabs">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active">
+                                        <a href="#home" aria-controls="home" role="tab" data-toggle="tab"></a></li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="home"></div>
+                                </div>
+                    </div>
+				</div>
+	</div>
+
+
+函数
+
+动态树
+
+function getTree() {
+	var shu="";
+	 $.ajax({
+		 url:"../user/getTreeList.do",
+		 type:"post",
+		 dateType:"json",
+		 async:false,
+		 success:function(data){
+			 shu=JSON.stringify(data);
+		 },error:function(){
+			 alert("树获取错误");
+		 }
+	 })
+	 return shu;
+}
+
+var nodeCheckedSilent = false;  
+function nodeChecked (event, node){  
+    if(nodeCheckedSilent){  
+        return;  
+    }  
+    nodeCheckedSilent = true;  
+    checkAllParent(node);  
+    checkAllSon(node);  
+    nodeCheckedSilent = false;  
+}  
+  
+var nodeUncheckedSilent = false;  
+function nodeUnchecked  (event, node){  
+    if(nodeUncheckedSilent)  
+        return;  
+    nodeUncheckedSilent = true;  
+    uncheckAllParent(node);  
+    uncheckAllSon(node);  
+    nodeUncheckedSilent = false;  
+}  
+function checkAllParent(node){  
+    $('#tree').treeview('checkNode',node.nodeId,{silent:true});  
+    var parentNode = $('#tree').treeview('getParent',node.nodeId);  
+    if(!("id" in parentNode)){  
+        return;  
+    }else{  
+        checkAllParent(parentNode);  
+    }  
+}  
+//取消全部父节点  
+function uncheckAllParent(node){  
+    $('#tree').treeview('uncheckNode',node.nodeId,{silent:true});  
+    var siblings = $('#tree').treeview('getSiblings', node.nodeId);  
+    var parentNode = $('#tree').treeview('getParent',node.nodeId);  
+    if(!("id" in parentNode)) {  
+        return;  
+    }  
+    var isAllUnchecked = true;  //是否全部没选中  
+    for(var i in siblings){  
+        if(siblings[i].state.checked){  
+            isAllUnchecked=false;  
+            break;  
+        }  
+    }  
+    if(isAllUnchecked){  
+        uncheckAllParent(parentNode);  
+    }  
+  
+}  
+
+//级联选中所有子节点  
+function checkAllSon(node){  
+    $('#tree').treeview('checkNode',node.nodeId,{silent:true});  
+    if(node.nodes!=null&&node.nodes.length>0){  
+        for(var i in node.nodes){  
+            checkAllSon(node.nodes[i]);  
+        }  
+    }  
+}  
+//级联取消所有子节点  
+function uncheckAllSon(node){  
+    $('#tree').treeview('uncheckNode',node.nodeId,{silent:true});  
+    if(node.nodes!=null&&node.nodes.length>0){  
+        for(var i in node.nodes){  
+            uncheckAllSon(node.nodes[i]);  
+        }  
+    }  
+}
+$('#tree').treeview({  
+    showCheckbox:true,  
+    data:getTree(),  
+    onNodeChecked:nodeChecked ,  
+    onNodeUnchecked:nodeUnchecked  
+}); 

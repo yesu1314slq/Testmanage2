@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ideal.uam.mapper.login.LoginMapper" >
+	<!--登录时进行用户查询-->
+	<select id="getUserByUserName" parameterType="string" resultType="staff">
+		select id,name,org_id,spell,staff_number,pwd,state,create_time,create_time,exp_Time,
+		link_tel,link_addr,create_staff_id,remark from staff where name=#{username} limit 0,1
+	</select>
+	<!--新增用户-->
+	<insert id="insertUser" parameterType="staff">
+		insert into staff(name,pwd) values(#{name},#{pwd})
+	</insert>
+	
+</mapper>

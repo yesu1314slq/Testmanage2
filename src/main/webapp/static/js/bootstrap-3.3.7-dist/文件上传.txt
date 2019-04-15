@@ -1,0 +1,97 @@
+﻿引入js
+
+<!-- ----------------上传-------------------- -->
+<script type="text/javascript" src="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrap-fileinput-master/js/fileinput.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrap-fileinput-master/js/locales/zh.js"></script>
+<link href="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrap-fileinput-master/css/fileinput.min.css" rel="stylesheet" />
+
+
+前台页面
+
+
+<div class="row">
+		<div class="col-md-6">
+        	<input type="file" name="imgfile" id="txt_file"  class="file-loading" />
+        </div>
+</div>
+
+input 框中加入multiple既可以多文件上传
+多文件回显
+	var array = new Array();  
+		<c:forEach items="${list}" var="t">  
+			array.push("<%=request.getContextPath()%>/${t.imgUrl}"); 
+		</c:forEach>  
+     var preConfigList = new Array();
+     for ( var i = 0; i < ${list.size()}; i++){
+ 		var filename = array[i];
+ 		var fileId = ${list.get(i).imgId};
+ 		var tjson = {caption:filename, // 展示的文件名
+ 					width: '120px', 
+ 					url: '<%=request.getContextPath()%>/product/deleteFile.do', // 删除url
+ 					extra: {'id': fileId}//向后台传递的参数
+ 					};
+ 		preConfigList[i] = tjson;
+ 	 }
+     var imgallurl="";
+	 $('#update_imgUrlArray_file').fileinput({
+		   	initialPreview:array,//预览的数组有后台查询数据转换
+		   	initialPreviewConfig:preConfigList,用于删除预览的文件
+		   	initialPreviewAsData:true,
+	        language: 'zh', //设置语言
+	        uploadUrl:"<%=request.getContextPath()%>/product/uplodProductImg.do", //上传的地址
+	        allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
+	        showUpload: true, //是否显示上传按钮
+	        showCaption: false,//是否显示标题
+	        showUploadedThumbs:true,
+	        uploadAsync:true,
+	        //dropZoneEnabled: false,//是否显示拖拽区域
+	        //minImageWidth: 50, //图片的最小宽度
+	        //minImageHeight: 50,//图片的最小高度
+	        //maxImageWidth: 1000,//图片的最大宽度
+	        //maxImageHeight: 1000,//图片的最大高度
+	        //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+	        //minFileCount: 0,
+	        browseClass: "btn btn-primary", //按钮样式     
+	        maxFileCount: 10, //表示允许同时上传的最大文件个数
+	        enctype: 'multipart/form-data',
+	        validateInitialCount:true,
+	        previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+	        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+	    }).on("fileuploaded", function (event, data, previewId, index){
+	    	imgallurl+=","+data.response.img;
+			$("#update_imgUrlArray").val(imgallurl);
+	 }).on('filesuccessremove',function (event,id ){  
+		    if(some_processing_function (id)){  
+		       alert("删除成功")
+		    } else {  
+		    }
+		});
+	});
+函数
+
+
+$(function(){
+	   $('#txt_file').fileinput({
+	        language: 'zh', //设置语言
+	        uploadUrl:"<%=request.getContextPath()%>/userImg.html", //上传的地址
+	        allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
+	        showUpload: true, //是否显示上传按钮
+	        showCaption: false,//是否显示标题
+	        uploadAsync:true,
+	        browseClass: "btn btn-primary", //按钮样式     
+	        //dropZoneEnabled: false,//是否显示拖拽区域
+	        //minImageWidth: 50, //图片的最小宽度
+	        //minImageHeight: 50,//图片的最小高度
+	        //maxImageWidth: 1000,//图片的最大宽度
+	        //maxImageHeight: 1000,//图片的最大高度
+	        //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+	        //minFileCount: 0,
+	        maxFileCount: 10, //表示允许同时上传的最大文件个数
+	        enctype: 'multipart/form-data',
+	        validateInitialCount:true,
+	        previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+	        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+	    }).on("fileuploaded", function (event, data, previewId, index){
+			$("#userImg").val(data.response.user_img);
+	 })
+	});

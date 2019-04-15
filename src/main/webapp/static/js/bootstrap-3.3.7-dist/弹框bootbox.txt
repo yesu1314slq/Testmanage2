@@ -1,0 +1,59 @@
+引入js
+<script type="text/javascript" src="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/bootstrap-bootbox/bootbox.js"></script>
+
+
+
+
+
+
+
+函数
+function addbox(){
+		bootbox.dialog({
+            message:getDivUrl("book_add.html"),  
+            title: "增加图书",  
+            buttons: {  
+                Cancel: {  
+                    label: "取消",  
+                    className: "btn-default",  
+                    callback: function () {  
+                       
+                    }  
+                }  
+                , OK: {  
+                    label: "保存",  
+                    className: "btn-primary",  
+                    callback: function () { 
+                   	 $.ajax({
+                  		  url:"insertBook.html",
+                  		  type:"post",
+                  		  dateType:"json",
+                  		  data:$("#book_add_form").serialize(),
+                  		  success:function(data){
+                  			$('#tb_departments').bootstrapTable('refresh');
+                  		  },error:function(){
+                  			  alert("增加报错");
+                  		  }
+                  	  })
+                    }  
+                }  
+            }  
+        });
+	}
+
+
+function getDivUrl(url){
+		var fan_page="";
+		 $.ajax({
+    		  url:url,
+    		  type:"post",
+    		  dateType:"text",
+    		  async:false,
+    		  success:function(data){
+    			 fan_page=data;
+    		  },error:function(){
+    			  alert("修改报错");
+    		  }
+    	  })
+    	  return fan_page;
+	}

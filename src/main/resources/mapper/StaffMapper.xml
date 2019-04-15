@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ideal.uam.mapper.user.StaffMapper" >
+	<!--用户管理条件查询及分页-->
+	<select id="getstaffList" parameterType="com.ideal.uam.util.Page" resultType="staff">
+		select id,name,org_id,spell,staff_number,pwd,state,create_time,create_time,exp_Time,
+		link_tel,link_addr,create_staff_id,remark from staff where 1=1 
+		<if test="null!=obj.name and ''!=obj.name">
+			and name like concat('%',#{obj.name},'%')
+		</if>
+		<if test="null!=obj.staff_number and ''!=obj.staff_number">
+			and staff_number like concat('%',#{obj.staff_number},'%')
+		</if>
+		limit #{strat},#{pagecount}
+	</select>
+	<!--用户管理查询总条数-->
+	<select id="getCount" parameterType="com.ideal.uam.util.Page" resultType="int">
+		select count(1) from staff where 1=1
+		<if test="null!=obj.name and ''!=obj.name">
+			and name like concat('%',#{obj.name},'%')
+		</if>
+		<if test="null!=obj.staff_number and ''!=obj.staff_number">
+			and staff_number like concat('%',#{obj.staff_number},'%')
+		</if>
+	</select>
+	<!--用户管理查询一个对象-->
+	<select id="getStaffById" parameterType="string" resultType="com.ideal.uam.entity.Staff">
+		SELECT ID,NAME,ORG_ID,SPELL,STAFF_NUMBER,LINK_TEL,REMARK FROM STAFF WHERE ID=#{ID}
+	</select>
+
+	<!---用户的修改方法-->
+	<update id="updateStaff" parameterType="com.ideal.uam.entity.Staff">
+		update staff set name =#{name},org_id =#{org_id},spell =#{spell},staff_number =#{staff_number},
+		link_tel =#{link_tel},remark =#{remark} where id = #{id};
+	</update>
+	<!---用户删除方法-->
+	<delete id="deleteStaffById" parameterType="Integer" >
+		delete from staff where id=#{id}
+	</delete>
+
+	<!---获取指定用户的角色-->
+	<select id="getRoleStaffList" parameterType="string" resultType="map">
+		  select role_id from staff_2_role where staff_id=#{id}
+	</select>
+
+	<select id="findPermissions" parameterType="int" resultType="tree">
+		select id,pid,permission from auth where id in (
+		select auth.id from staff_2_role
+		left join role_2_auth  on staff_2_role.role_id= role_2_auth.role_id
+		left join auth on auth.id = role_2_auth.auth_id
+		where staff_2_role.staff_id = #{id})
+	</select>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ideal.uam.mapper.account.AccountMapper" >
+	
+	<select id="getAccountList" parameterType="com.ideal.uam.util.Page" resultType="unified_account">
+		<!-- 统一账号管理条件查询及分页-->
+		select logic_id,unified_id,customer_name,pwd_type,unified_state,customer_id,is_unified_pwd,encryption_type from ty_unified_account where 1=1
+		<if test="null!=obj.customer_name and ''!=obj.customer_name">
+			and customer_name like concat('%',#{obj.customer_name},'%')
+		</if>
+		<if test="null!=obj.minUpdatetime and ''!=obj.minUpdatetime">
+            and update_time &gt;= #{obj.minUpdatetime}
+        </if>
+        <if test="null!=obj.maxUpdatetime and ''!=obj.maxUpdatetime">
+            and update_time &lt;= #{obj.maxUpdatetime}
+        </if>
+		<if test="null!=obj.unified_state">
+			and unified_state = #{obj.unified_state}
+		</if>
+        limit #{strat},#{pagecount}
+	</select>
+	<!--统一账号管理查询总条数-->
+	<select id="getCount" parameterType="com.ideal.uam.util.Page" resultType="int">
+		select count(1) from ty_unified_account where 1=1
+		<if test="null!=obj.customer_name and ''!=obj.customer_name">
+			and customer_name like concat('%',#{obj.customer_name},'%')
+		</if>
+		<if test="null!=obj.minUpdatetime and ''!=obj.minUpdatetime">
+			and update_time &gt;= #{obj.minUpdatetime}
+		</if>
+		<if test="null!=obj.maxUpdatetime and ''!=obj.maxUpdatetime">
+			and update_time &lt;= #{obj.maxUpdatetime}
+		</if>
+		<if test="null!=obj.unified_state">
+			and unified_state = #{obj.unified_state}
+		</if>
+	</select>
+	<!--统一账号管理删除一个对象-->
+	<delete id="deleteAccountById" parameterType="java.lang.String" >
+		DELETE  from ty_unified_account where logic_id=#{id}
+	</delete>
+	<!--统一账号管理查询一个对象-->
+	<select id="getAccountById" parameterType="string" resultType="unified_account">
+		SELECT logic_id,unified_id,unified_pwd,customer_name,pwd_type,unified_state,customer_id,is_unified_pwd,encryption_type from ty_unified_account  WHERE logic_id=#{id}
+	</select>
+	<!--统一账号管理修改一个对象-->
+	<update id="updateAccount" parameterType="unified_account">
+		update ty_unified_account set unified_pwd =#{unified_new_pwd} where logic_id=#{logic_id};
+	</update>
+</mapper>

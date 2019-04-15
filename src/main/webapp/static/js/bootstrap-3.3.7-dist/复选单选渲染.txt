@@ -1,0 +1,20 @@
+引入js以及css
+<link href="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/ichech/skins/all.css"rel="stylesheet" />
+<script type="text/javascript" src="<%=request.getContextPath()%>/static/js/bootstrap-3.3.7-dist/ichech/icheck.min.js"></script>
+
+
+前台代码:
+	 					<div class="col-sm-4">
+                           	<input type="radio" name="sortBy" value="asc" checked>
+             				<label>由底到高</label>
+             				<input type="radio" name="sortBy" value="desc">
+             				<label>由高到底</label>
+                          </div>
+                          
+                          
+函数初始化:
+			$("input[name='sortBy']").iCheck({
+	            checkboxClass: 'icheckbox_square-blue',//复选框的样式
+	            radioClass: 'iradio_square-blue',//单选框的样式
+	            increaseArea: '20%'
+	          })
